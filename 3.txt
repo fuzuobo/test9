@@ -1,94 +1,94 @@
 <template>
-    <div class="main-box">
+    <div class="main------box">
         <section class="AdditionsAndDeletions">
-            <!-- Ìí¼Ó -->
+        
             <Row>
                 <Col span="10">
                 <Form class="search-equipment" :model="searchItem" :label-width="80">
                     <Col span="10">
-                    <FormItem label="Ãû³Æ">
-                        <Select v-model="searchItem.equ_name" filterable remote :remote-method="remoteName" :loading="loading" clearable placeholder="ÇëÊäÈëÉè±¸Ãû³Æ...">
+                    <FormItem label="åç§°">
+                        <Select v-model="searchItem.equ_name" filterable remote :remote-method="remoteName" :loading="loading" clearable placeholder="è¯·è¾“å…¥è®¾å¤‡åç§°...">
                             <Option v-for="(item,index) in optionsName" :value="item.equ_name" :key="index">{{item.equ_name}}</Option>
                         </Select>
                     </FormItem>
                     </Col>
                     <Col span="10">
-                    <FormItem label="×´Ì¬">
+                    <FormItem label="çŠ¶æ€">
                         <Select v-model="searchItem.equ_state" clearable>
                             <Option :value="item.id" :key="item.id" v-for="item in equstate">{{ item.codename }}</Option>
                         </Select>
                     </FormItem>
                     </Col>
                     <Col offset="1" span="3">
-                    <Button type="primary" @click.native="searchData">²éÑ¯</Button>
+                    <Button type="primary" @click.native="searchData">æŸ¥è¯¢</Button>
                     </Col>
                 </Form>
                 </Col>
                 <Col span="14">
                 <div class='pull-right'>
                      <Upload @click.native="importBeforeUpload" :headers="headers" :show-upload-list="false" :on-success="importSuccess" :format="['jpg','jpeg','png','bmp','pdf','rtf','xls','xlsx','docx','doc']" :action="url">
-                        <Button type="primary" class="btn-margin-right" icon="ios-cloud-upload-outline">µ¼Èë</Button>
+                        <Button type="primary" class="btn-margin-right" icon="ios-cloud-upload-outline">å¯¼å…¥</Button>
                 </Upload>
                 </div>
-                <Button type="primary" class="pull-right btn-margin-right" @click="downloadFile()">µ¼³ö</Button>
+                <Button type="primary" class="pull-right btn-margin-right" @click="downloadFile()">å¯¼å‡º</Button>
                 <Button type="primary" class="pull-right btn-margin-right" @click="deleteData">
-                    <i class="ivu-icon ivu-icon-plus btn-margin-right"></i>É¾³ıÉè±¸
+                    <i class="ivu-icon ivu-icon-plus btn-margin-right"></i>åˆ é™¤è®¾å¤‡
                 </Button>
                 <Button type="primary" class="pull-right btn-margin-right" @click="addData">
-                    <i class="ivu-icon ivu-icon-plus btn-margin-right"></i>Ìí¼ÓÉè±¸
+                    <i class="ivu-icon ivu-icon-plus btn-margin-right"></i>æ·»åŠ è®¾å¤‡
                 </Button>
                 </Col>
             </Row>
         </section>
         <section class="list" v-show="getType">
-            <Table ref="selection" @on-select="selectedOption" @on-select-all="selectedOption" @on-select-cancel="selectedOption" :columns="tableColumn" :data="equipmentList" border stripe no-data-text="ÔİÎŞÊı¾İ" :loading="tableLoading" size="small" class="customTable" />
+            <Table ref="selection" @on-select="selectedOption" @on-select-all="selectedOption" @on-select-cancel="selectedOption" :columns="tableColumn" :data="equipmentList" border stripe no-data-text="æš‚æ— æ•°æ®" :loading="tableLoading" size="small" class="customTable" />
             <div class="page-component">
                 <Page :total="totalCount" :current="page" :page-size="size" show-elevator @on-change="setPage" />
             </div>
-            <!-- µ¼³ö -->
+            <!-- å¯¼å‡º -->
             <a id="downlink"></a>
         </section>
-        <!-- Ìí¼ÓºÍ±à¼­ -->
+        <!-- æ·»åŠ å’Œç¼–è¾‘ -->
         <section class="add_Edit">
             <!-- add or edit -->
             <Form v-show="!getType" :model="labDetails" :label-width="80">
                 <table class="editbaseInfo" width="90%">
                     <tr>
-                        <td width="16%">ÀàĞÍ£º</td>
+                        <td width="16%">ç±»å‹ï¼š</td>
                         <td width="30%">
                             <Input v-model="labDetails.equ_type" placeholder=""></Input>
                         </td>
-                        <td width="16%">Éè±¸Ãû³Æ£º</td>
+                        <td width="16%">è®¾å¤‡åç§°ï¼š</td>
                         <td>
                             <Input v-model="labDetails.equ_name" placeholder=""></Input>
                         </td>
                     </tr>
                     <tr>
-                        <td>ÊµÑéÊÒ£º</td>
+                        <td>å®éªŒå®¤ï¼š</td>
                         <td>
                             <Input v-model="labDetails.org_name" placeholder="" /></Input>
                         </td>
-                        <td>ÔğÈÎÈË£º</td>
+                        <td>è´£ä»»äººï¼š</td>
                         <td>
                             <Input v-model="labDetails.dutyperson" placeholder=""></Input>
                         </td>
                     </tr>
                     <tr>
-                        <td>ÁªÏµµç»°£º</td>
+                        <td>è”ç³»ç”µè¯ï¼š</td>
                         <td>
                             <Input v-model="labDetails.phone" placeholder=""></Input>
                         </td>
-                        <td>Éè±¸×¢²á´úÂë£º</td>
+                        <td>è®¾å¤‡æ³¨å†Œä»£ç ï¼š</td>
                         <td>
                             <Input v-model="labDetails.equ_regcode" placeholder=""></Input>
                         </td>
                     </tr>
                     <tr>
-                        <td>ÏÂ´Î¼ì²âÈÕÆÚ£º</td>
+                        <td>ä¸‹æ¬¡æ£€æµ‹æ—¥æœŸï¼š</td>
                         <td>
                             <DatePicker @on-change="dateFormat" type="date" placeholder="Select date" v-model="labDetails.nextchecktime"></DatePicker>
                         </td>
-                        <td>Éè±¸×´Ì¬£º</td>
+                        <td>è®¾å¤‡çŠ¶æ€ï¼š</td>
                         <td>
                             <RadioGroup v-model="labDetails.equ_state">
                                 <Radio :label="item.id" v-for="(item,index) in equstate" :key="index">{{item.codename}}</Radio>
@@ -96,17 +96,17 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>ÉÏ´«¸½¼ş£º</td>
+                        <td>ä¸Šä¼ é™„ä»¶ï¼š</td>
                         <td colspan="3">
                             <Upload @click.native="handleBeforeUpload" :headers="headers" :show-upload-list="false" :on-success="handleSuccess" :format="['jpg','jpeg','png','bmp','pdf','rtf','xls','xlsx','docx','doc']" :action="url">
-                                <Button type="ghost" icon="ios-cloud-upload-outline">Ñ¡ÔñÎÄ¼ş</Button>
+                                <Button type="ghost" icon="ios-cloud-upload-outline">é€‰æ‹©æ–‡ä»¶</Button>
                             </Upload>
                         </td>
                     </tr>
                 </table>
                 <div class="sbt">
-                    <Button type="info" @click.native="saveEquipment()">È·¶¨</Button>
-                    <Button type="ghost" style="margin-left: 8px" @click.native="cancelOperate">È¡Ïû</Button>
+                    <Button type="info" @click.native="saveEquipment()">ç¡®å®š</Button>
+                    <Button type="ghost" style="margin-left: 8px" @click.native="cancelOperate">å–æ¶ˆ</Button>
                 </div>
             </Form>
         </section>
@@ -114,9 +114,9 @@
 </template>
 
 <script>
-import config from "../../config"; //·şÎñÆ÷ÅäÖÃ
-import global from '../../assets/global.js' //ÒıÈëÈ«¾Öº¯Êı
-import excel from "../../assets/excel.js"; //excelÏÂÔØ
+import config from "../../config"; //æœåŠ¡å™¨é…ç½®
+import global from '../../assets/global.js' //å¼•å…¥å…¨å±€å‡½æ•°
+import excel from "../../assets/excel.js"; //excelä¸‹è½½
 export default {
     data() {
         const tableColumn = [
@@ -126,41 +126,41 @@ export default {
                 align: 'center'
             },
             {
-                title: "Éè±¸Ãû³Æ",
+                title: "è®¾å¤‡åç§°",
                 key: "equ_name",
             }, {
-                title: "Éè±¸ÀàĞÍ",
+                title: "è®¾å¤‡ç±»å‹",
                 key: "equ_type",
             }, {
-                title: "ÊµÑéÊÒ",
+                title: "å®éªŒå®¤",
                 key: "org_name",
             },
             {
-                title: "ÔğÈÎÈË",
+                title: "è´£ä»»äºº",
                 key: "dutyperson",
             },
             {
-                title: "ÁªÏµµç»°",
+                title: "è”ç³»ç”µè¯",
                 key: "phone",
             },
             {
-                title: "×Ê²ú±àºÅ",
+                title: "èµ„äº§ç¼–å·",
                 key: "assetno",
             },
             {
-                title: "Éè±¸×¢²á´úÂë",
+                title: "è®¾å¤‡æ³¨å†Œä»£ç ",
                 key: "equ_regcode",
             },
             {
-                title: "ÏÂ´Î¼ì²âÈÕÆÚ",
+                title: "ä¸‹æ¬¡æ£€æµ‹æ—¥æœŸ",
                 key: "nextchecktime",
             },
             {
-                title: "Éè±¸×´Ì¬",
+                title: "è®¾å¤‡çŠ¶æ€",
                 key: "equ_state",
             },
             {
-                title: "¸½¼ş",
+                title: "é™„ä»¶",
                 key: "attach",
                 render: (h, params) => {
                     return h('a', {
@@ -168,11 +168,11 @@ export default {
                             href: "//" + params.row.attach ? params.row.attach : "",
                             target: "_blank"
                         },
-                    }, '¸½¼ş')
+                    }, 'é™„ä»¶')
                 }
             },
             {
-                title: '²Ù×÷',
+                title: 'æ“ä½œ',
                 width: 150,
                 align: 'center',
                 render: (h, params) => {
@@ -223,9 +223,9 @@ export default {
             loading: true,
             optionsName: '',
             typeState: false,
-            headers: { 'Authorization': localStorage.getItem("baseInfo_Authorization") ? localStorage.getItem("baseInfo_Authorization") : "" }, //Í·²¿
+            headers: { 'Authorization': localStorage.getItem("baseInfo_Authorization") ? localStorage.getItem("baseInfo_Authorization") : "" }, //å¤´éƒ¨
             url: "",
-            outFile: '',  // µ¼³öÎÄ¼şel
+            outFile: '',  // å¯¼å‡ºæ–‡ä»¶el
         };
     },
     props: {
@@ -235,7 +235,7 @@ export default {
         }
     },
     computed: {
-        /*Éè±¸ĞÅÏ¢*/
+        /*è®¾å¤‡ä¿¡æ¯*/
         getEquipmenData() {
             return this.$store.state.EquipmentData;
         },
@@ -250,18 +250,18 @@ export default {
         }
     },
     created() {
-        // this.$store.commit("getBaseCode", '');//»ñÈ¡¹«¹²´úÂë
+        // this.$store.commit("getBaseCode", '');//è·å–å…¬å…±ä»£ç 
         this.equstate = JSON.parse(localStorage.getItem("equstate"));
     },
     mounted() {
         this.$nextTick(function () {
             this.getEquipmentList();
-            this.outFile = document.getElementById('downlink');//µ¼³öÏÂÔØ
+            this.outFile = document.getElementById('downlink');//å¯¼å‡ºä¸‹è½½
         });
           this.setCurrentPage();
     },
     methods: {
-        //ÉÏ´«¸½¼ş
+        //ä¸Šä¼ é™„ä»¶
         handleBeforeUpload: function () {
             this.updateUrl();
         },
@@ -278,7 +278,7 @@ export default {
             const sign = this.commonMethods.setSign(app_secret, app_key, timestamp, path);
             this.url = config.serverUrl + path + "?app_key=" + app_key + "&timestamp=" + timestamp + "&sign=" + sign;
         },
-        //µ¼Èë
+        //å¯¼å…¥
         updateImportUrl:function(){
             const app_secret = "c6d9622fdc385b26129fc8a4c7a30c2a";
             const app_key = "cgsoft";
@@ -293,13 +293,13 @@ export default {
         importSuccess:function(file, fileList){
             if(fileList.response.code && fileList.response.code==200 || fileList.response.code=='200'){
                 this.upload_statue=false;
-                this.getEquipmentList();//ÖØĞÂÇëÇóÁĞ±íÊı¾İ
+                this.getEquipmentList();//é‡æ–°è¯·æ±‚åˆ—è¡¨æ•°æ®
             }else{
-                this.$Message.error('µ¼ÈëÊ§°Ü£¡');
+                this.$Message.error('å¯¼å…¥å¤±è´¥ï¼');
             }
         },
        
-         //±à¼­
+         //ç¼–è¾‘
         editTablist(id) {
             this.$store.commit("setType", false);
             let url = "/base/equipment/" + id, vm = this;
@@ -312,12 +312,12 @@ export default {
                 }
             })
         },
-        // É¾³ı
+        // åˆ é™¤
         deleteTablist(id) {
             let url = "/base/equipment/" + id, vm = this;
             this.$Modal.confirm({
-                title: 'ÎÂÜ°ÌáÊ¾',
-                content: 'È·ÈÏÉ¾³ı¸ÃÉè±¸£¿',
+                title: 'æ¸©é¦¨æç¤º',
+                content: 'ç¡®è®¤åˆ é™¤è¯¥è®¾å¤‡ï¼Ÿ',
                 onOk: () => {
                     vm.commonMethods.emitAjax({
                         path: url,
@@ -325,43 +325,43 @@ export default {
                         data: { org_id: vm.$route.params.org_id ? vm.$route.params.org_id : '' },
                         success: function (response) {
                             vm.$Modal.success({
-                                title: "ÏµÍ³ÌáÊ¾",
-                                content: "±£´æ³É¹¦£¡"
+                                title: "ç³»ç»Ÿæç¤º",
+                                content: "ä¿å­˜æˆåŠŸï¼"
                             });
                             vm.$store.commit("setType", true);
-                            vm.getEquipmentList();//ÖØĞÂÇëÇóÁĞ±íÊı¾İ
+                            vm.getEquipmentList();//é‡æ–°è¯·æ±‚åˆ—è¡¨æ•°æ®
                         },
                         error: function () {
                             vm.$Modal.error({
-                                title: "ÏµÍ³ÌáÊ¾",
-                                content: "±£´æÊ§°Ü£¡"
+                                title: "ç³»ç»Ÿæç¤º",
+                                content: "ä¿å­˜å¤±è´¥ï¼"
                             });
                             vm.$store.commit("setType", true);
                         }
                     })
                 },
                 onCancel: () => {
-                    vm.$Message.info('³É¹¦È¡Ïû²Ù×÷');
+                    vm.$Message.info('æˆåŠŸå–æ¶ˆæ“ä½œ');
                 }
             });
         },
-        // Ìí¼Ó
+        // æ·»åŠ 
         addData() {
             this.$store.commit("setType", false);
             this.labDetails = {};
         },
-        // É¾³ı
+        // åˆ é™¤
         deleteData() {
             if (this.multipleDeleteId && this.multipleDeleteId != '') {
                 this.multipleDelete()
             } else {
                 this.$Modal.error({
-                    title: "ÏµÍ³ÌáÊ¾",
-                    content: "ÇëÑ¡ÔñÉ¾³ıÏî£¡"
+                    title: "ç³»ç»Ÿæç¤º",
+                    content: "è¯·é€‰æ‹©åˆ é™¤é¡¹ï¼"
                 });
             }
         },
-        //Ñ¡ÖĞÏî
+        //é€‰ä¸­é¡¹
         selectedOption: function (option) {
             let deleteData = [];
             option.forEach(element => {
@@ -372,8 +372,8 @@ export default {
         multipleDelete() {
             let vm = this, url = "/base/equipment/deletes";
             this.$Modal.confirm({
-                title: 'ÎÂÜ°ÌáÊ¾',
-                content: 'È·ÈÏÉ¾³ıÕâĞ©Éè±¸ĞÅÏ¢Âğ£¿',
+                title: 'æ¸©é¦¨æç¤º',
+                content: 'ç¡®è®¤åˆ é™¤è¿™äº›è®¾å¤‡ä¿¡æ¯å—ï¼Ÿ',
                 onOk: () => {
                     vm.commonMethods.emitAjax({
                         path: url,
@@ -383,25 +383,25 @@ export default {
                             'org_id': this.$route.params.org_id ? this.$route.params.org_id : null
                         },
                         success: function (response) {
-                            vm.$Message.info('É¾³ı³É¹¦');
-                            vm.getEquipmentList();//ÖØĞÂÇëÇóÁĞ±íÊı¾İ
+                            vm.$Message.info('åˆ é™¤æˆåŠŸ');
+                            vm.getEquipmentList();//é‡æ–°è¯·æ±‚åˆ—è¡¨æ•°æ®
                             vm.$store.commit("setType", true);
                         },
                         error: function () {
                             vm.$Modal.error({
-                                title: "ÏµÍ³ÌáÊ¾",
-                                content: "±£´æÊ§°Ü£¡"
+                                title: "ç³»ç»Ÿæç¤º",
+                                content: "ä¿å­˜å¤±è´¥ï¼"
                             });
                             vm.$store.commit("setType", true);
                         }
                     })
                 },
                 onCancel: () => {
-                    vm.$Message.info('³É¹¦È¡Ïû²Ù×÷');
+                    vm.$Message.info('æˆåŠŸå–æ¶ˆæ“ä½œ');
                 }
             });
         },
-        // ¶¯Ì¬¼ÓÔØ
+        // åŠ¨æ€åŠ è½½
         remoteName(query) {
             if (query !== '') {
                 this.$store.commit("getEquipmentName", query);
@@ -415,7 +415,7 @@ export default {
                 this.optionsName = [];
             }
         },
-        // ËÑË÷
+        // æœç´¢
         searchData() {
             this.getEquipmentList();
         },
@@ -437,27 +437,27 @@ export default {
             paramsQuery.org_id=this.$route.params.org_id ? this.$route.params.org_id : '';
             vm.$store.commit("setModal", {
                 show: true,
-                content: "ÊÇ·ñÒªµ¼³öÉè±¸ĞÅÏ¢£¿",
+                content: "æ˜¯å¦è¦å¯¼å‡ºè®¾å¤‡ä¿¡æ¯ï¼Ÿ",
                 onOk: () => {
                 this.commonMethods.emitAjax({
                         path: "/base/equipment/export/",
                         type: "GET",
                         data:paramsQuery,
                         success: function (response) {
-                           /*excelĞèÒªµÄ×Ö¶Î*/
+                           /*exceléœ€è¦çš„å­—æ®µ*/
                             var userExcelList = response,userExcelList_=[],data = [{}];
                             if (userExcelList.length == 0) {
-                                vm.$Message.warning('Ã»ÓĞ¿Éµ¼³öµÄÊı¾İ!');
+                                vm.$Message.warning('æ²¡æœ‰å¯å¯¼å‡ºçš„æ•°æ®!');
                                 return false;
                             };
                             const importData={
-                                equ_name:"Éè±¸Ãû³Æ",
-                                equ_type:"Éè±¸ÀàĞÍ",
-                                org_name:"ÊµÑéÊÒ",
-                                dutyperson:"ÔğÈÎÈË",
-                                phone:"ÁªÏµµç»°",
-                                assetno:"×Ê²ú±àºÅ",
-                                equ_state:"Éè±¸×´Ì¬"
+                                equ_name:"è®¾å¤‡åç§°",
+                                equ_type:"è®¾å¤‡ç±»å‹",
+                                org_name:"å®éªŒå®¤",
+                                dutyperson:"è´£ä»»äºº",
+                                phone:"è”ç³»ç”µè¯",
+                                assetno:"èµ„äº§ç¼–å·",
+                                equ_state:"è®¾å¤‡çŠ¶æ€"
                             };
                             for (let i = 0; i < userExcelList.length; i++) {
                                 delete userExcelList[i].org_id;
@@ -473,13 +473,13 @@ export default {
                                 }
                             };
                             data = data.concat(userExcelList);
-                            excel.downloadExl(data, 'Éè±¸ĞÅÏ¢', undefined, vm.outFile);
+                            excel.downloadExl(data, 'è®¾å¤‡ä¿¡æ¯', undefined, vm.outFile);
                         }
                     })
                 }
             });
         },
-        // ±£´æºÍ±à¼­
+        // ä¿å­˜å’Œç¼–è¾‘
         saveEquipment() {
             let vm = this, path, type, para = JSON.parse(JSON.stringify(this.labDetails));
             if (this.labDetails.equ_id && this.labDetails.equ_id != '') {
@@ -497,22 +497,22 @@ export default {
                 data: para,
                 success: function (response) {
                     vm.$Modal.success({
-                        title: "ÏµÍ³ÌáÊ¾",
-                        content: "±£´æ³É¹¦£¡"
+                        title: "ç³»ç»Ÿæç¤º",
+                        content: "ä¿å­˜æˆåŠŸï¼"
                     });
-                    vm.getEquipmentList();//ÖØĞÂÇëÇóÁĞ±íÊı¾İ
+                    vm.getEquipmentList();//é‡æ–°è¯·æ±‚åˆ—è¡¨æ•°æ®
                     vm.$store.commit("setType",true);
                 },
                 error: function () {
                     vm.$Modal.error({
-                        title: "ÏµÍ³ÌáÊ¾",
-                        content: "±£´æÊ§°Ü£¡"
+                        title: "ç³»ç»Ÿæç¤º",
+                        content: "ä¿å­˜å¤±è´¥ï¼"
                     });
                     vm.$store.commit("setType", false);
                 }
             })
         },
-        // È¡Ïû
+        // å–æ¶ˆ
         cancelOperate() {
             this.$store.commit("setType", false);
             this.initPage();
@@ -520,11 +520,11 @@ export default {
          dateFormat: function (time) {
             this.labDetails.nextchecktime = time || '';
         },
-        trim: function (str) { //È¥¿Õ¸ñ
+        trim: function (str) { //å»ç©ºæ ¼
             return str.replace(/(^\s*)|(\s*$)/g, "");
         },
         setCurrentPage: function () {
-            global.$on("currentPageInit", (message) => {   //ÕâÀï×îºÃÓÃ¼ıÍ·º¯Êı£¬²»È»thisÖ¸ÏòÓĞÎÊÌâ
+            global.$on("currentPageInit", (message) => {   //è¿™é‡Œæœ€å¥½ç”¨ç®­å¤´å‡½æ•°ï¼Œä¸ç„¶thisæŒ‡å‘æœ‰é—®é¢˜
                 this.page = message
             })
         },
