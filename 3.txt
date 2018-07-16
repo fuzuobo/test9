@@ -1,1 +1,550 @@
+<<<<<<< HEAD
 ﻿33
+=======
+﻿<template>
+    <div class="main------box">
+        <section class="AdditionsAndDeletions">
+
+        	master----------yyyyyyyyyyyyyyyy88888888888
+
+            <Row>
+                <Col span="10">
+                <Form class="search-equipment" :model="searchItem" :label-width="80">
+                    <Col span="10">
+                    <FormItem label="名称">
+                        <Select v-model="searchItem.equ_name" filterable remote :remote-method="remoteName" :loading="loading" clearable placeholder="请输入设备名称...">
+                            <Option v-for="(item,index) in optionsName" :value="item.equ_name" :key="index">{{item.equ_name}}</Option>
+                        </Select>
+                    </FormItem>
+                    </Col>
+                    <Col span="10">
+                    <FormItem label="状态">
+                        <Select v-model="searchItem.equ_state" clearable>
+                            <Option :value="item.id" :key="item.id" v-for="item in equstate">{{ item.codename }}</Option>
+                        </Select>
+                    </FormItem>
+                    </Col>
+                    <Col offset="1" span="3">
+                    <Button type="primary" @click.native="searchData">查询</Button>
+                    </Col>
+                </Form>
+                </Col>
+                <Col span="14">
+                <div class='pull-right'>
+                     <Upload @click.native="importBeforeUpload" :headers="headers" :show-upload-list="false" :on-success="importSuccess" :format="['jpg','jpeg','png','bmp','pdf','rtf','xls','xlsx','docx','doc']" :action="url">
+                        <Button type="primary" class="btn-margin-right" icon="ios-cloud-upload-outline">导入</Button>
+                </Upload>
+                </div>
+                <Button type="primary" class="pull-right btn-margin-right" @click="downloadFile()">导出</Button>
+                <Button type="primary" class="pull-right btn-margin-right" @click="deleteData">
+                    <i class="ivu-icon ivu-icon-plus btn-margin-right"></i>删除设备
+                </Button>
+                <Button type="primary" class="pull-right btn-margin-right" @click="addData">
+                    <i class="ivu-icon ivu-icon-plus btn-margin-right"></i>添加设备
+                </Button>
+                </Col>
+            </Row>
+        </section>
+        <section class="list" v-show="getType">
+            <Table ref="selection" @on-select="selectedOption" @on-select-all="selectedOption" @on-select-cancel="selectedOption" :columns="tableColumn" :data="equipmentList" border stripe no-data-text="暂无数据" :loading="tableLoading" size="small" class="customTable" />
+            <div class="page-component">
+                <Page :total="totalCount" :current="page" :page-size="size" show-elevator @on-change="setPage" />
+            </div>
+            <!-- 导出 -->
+            <a id="downlink"></a>
+        </section>
+        <!-- 添加和编辑 -->
+        <section class="add_Edit">
+            <!-- add or edit -->
+            <Form v-show="!getType" :model="labDetails" :label-width="80">
+                <table class="editbaseInfo" width="90%">
+                    <tr>
+                        <td width="16%">类型：</td>
+                        <td width="30%">
+                            <Input v-model="labDetails.equ_type" placeholder=""></Input>
+                        </td>
+                        <td width="16%">设备名称：</td>
+                        <td>
+                            <Input v-model="labDetails.equ_name" placeholder=""></Input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>实验室：</td>
+                        <td>
+                            <Input v-model="labDetails.org_name" placeholder="" /></Input>
+                        </td>
+                        <td>责任人：</td>
+                        <td>
+                            <Input v-model="labDetails.dutyperson" placeholder=""></Input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>联系电话：</td>
+                        <td>
+                            <Input v-model="labDetails.phone" placeholder=""></Input>
+                        </td>
+                        <td>设备注册代码：</td>
+                        <td>
+                            <Input v-model="labDetails.equ_regcode" placeholder=""></Input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>下次检测日期：</td>
+                        <td>
+                            <DatePicker @on-change="dateFormat" type="date" placeholder="Select date" v-model="labDetails.nextchecktime"></DatePicker>
+                        </td>
+                        <td>设备状态：</td>
+                        <td>
+                            <RadioGroup v-model="labDetails.equ_state">
+                                <Radio :label="item.id" v-for="(item,index) in equstate" :key="index">{{item.codename}}</Radio>
+                            </RadioGroup>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>上传附件：</td>
+                        <td colspan="3">
+                            <Upload @click.native="handleBeforeUpload" :headers="headers" :show-upload-list="false" :on-success="handleSuccess" :format="['jpg','jpeg','png','bmp','pdf','rtf','xls','xlsx','docx','doc']" :action="url">
+                                <Button type="ghost" icon="ios-cloud-upload-outline">选择文件</Button>
+                            </Upload>
+                        </td>
+                    </tr>
+                </table>
+                <div class="sbt">
+                    <Button type="info" @click.native="saveEquipment()">确定</Button>
+                    <Button type="ghost" style="margin-left: 8px" @click.native="cancelOperate">取消</Button>
+                </div>
+            </Form>
+        </section>
+    </div>
+</template>
+
+<script>
+import config from "../../config"; //服务器配置
+import global from '../../assets/global.js' //引入全局函数
+import excel from "../../assets/excel.js"; //excel下载
+export default {
+    data() {
+        const tableColumn = [
+            {
+                type: 'selection',
+                width: 60,
+                align: 'center'
+            },
+            {
+                title: "设备名称",
+                key: "equ_name",
+            }, {
+                title: "设备类型",
+                key: "equ_type",
+            }, {
+                title: "实验室",
+                key: "org_name",
+            },
+            {
+                title: "责任人",
+                key: "dutyperson",
+            },
+            {
+                title: "联系电话",
+                key: "phone",
+            },
+            {
+                title: "资产编号",
+                key: "assetno",
+            },
+            {
+                title: "设备注册代码",
+                key: "equ_regcode",
+            },
+            {
+                title: "下次检测日期",
+                key: "nextchecktime",
+            },
+            {
+                title: "设备状态",
+                key: "equ_state",
+            },
+            {
+                title: "附件",
+                key: "attach",
+                render: (h, params) => {
+                    return h('a', {
+                        attrs: {
+                            href: "//" + params.row.attach ? params.row.attach : "",
+                            target: "_blank"
+                        },
+                    }, '附件')
+                }
+            },
+            {
+                title: '操作',
+                width: 150,
+                align: 'center',
+                render: (h, params) => {
+                    return h('div', [
+                        h('Button', {
+                            props: {
+                                type: 'primary',
+                                size: 'small',
+                                icon: "edit"
+                            },
+                            style: {
+                                marginRight: '5px'
+                            },
+                            on: {
+                                click: () => {
+                                    this.editTablist(params.row.equ_id)
+                                }
+                            }
+                        }),
+                        h('Button', {
+                            props: {
+                                type: 'error',
+                                size: 'small',
+                                icon: "trash-a"
+                            },
+                            on: {
+                                click: () => {
+                                    this.deleteTablist(params.row.equ_id)
+                                }
+                            }
+                        })
+                    ]);
+                }
+            }]
+        return {
+            equipment: {
+                name: '',
+                status: ''
+            },
+            tableColumn: tableColumn,
+            searchItem: {},
+            size: 5,
+            page: 1,
+            tableLoading: false,
+            userInfo: {},
+            labDetails: {},
+            multipleDeleteId: '',
+            loading: true,
+            optionsName: '',
+            typeState: false,
+            headers: { 'Authorization': localStorage.getItem("baseInfo_Authorization") ? localStorage.getItem("baseInfo_Authorization") : "" }, //头部
+            url: "",
+            outFile: '',  // 导出文件el
+        };
+    },
+    props: {
+        initPage: {
+            type: Function,
+            default: null
+        }
+    },
+    computed: {
+        /*设备信息*/
+        getEquipmenData() {
+            return this.$store.state.EquipmentData;
+        },
+        equipmentList() {
+            return this.$store.state.equipmentList
+        },
+        totalCount() {
+            return this.$store.state.equipmentTtotalCount;
+        },
+        getType: function () {
+            return this.$store.state.setType;
+        }
+    },
+    created() {
+        // this.$store.commit("getBaseCode", '');//获取公共代码
+        this.equstate = JSON.parse(localStorage.getItem("equstate"));
+    },
+    mounted() {
+        this.$nextTick(function () {
+            this.getEquipmentList();
+            this.outFile = document.getElementById('downlink');//导出下载
+        });
+          this.setCurrentPage();
+    },
+    methods: {
+        //上传附件
+        handleBeforeUpload: function () {
+            this.updateUrl();
+        },
+        handleSuccess: function (file, fileList) {
+            if (fileList.response.data && fileList.response.data != '') {
+                this.labDetails.attach = fileList.response.data
+            }
+        },
+        updateUrl: function () {
+            const app_secret = "c6d9622fdc385b26129fc8a4c7a30c2a";
+            const app_key = "cgsoft";
+            const timestamp = Date.parse(new Date());
+            const path = '/admin/system/uploadFile';
+            const sign = this.commonMethods.setSign(app_secret, app_key, timestamp, path);
+            this.url = config.serverUrl + path + "?app_key=" + app_key + "&timestamp=" + timestamp + "&sign=" + sign;
+        },
+        //导入
+        updateImportUrl:function(){
+            const app_secret = "c6d9622fdc385b26129fc8a4c7a30c2a";
+            const app_key = "cgsoft";
+            const timestamp = Date.parse(new Date());
+            const path = '/base/equipment/import/'+(this.$route.params.org_id ? this.$route.params.org_id : '');
+            const sign = this.commonMethods.setSign(app_secret, app_key, timestamp, path);
+            this.url = config.serverUrl + path + "?app_key=" + app_key + "&timestamp=" + timestamp + "&sign=" + sign;
+        },
+        importBeforeUpload:function(){
+            this.updateImportUrl();
+        },
+        importSuccess:function(file, fileList){
+            if(fileList.response.code && fileList.response.code==200 || fileList.response.code=='200'){
+                this.upload_statue=false;
+                this.getEquipmentList();//重新请求列表数据
+            }else{
+                this.$Message.error('导入失败！');
+            }
+        },
+       
+         //编辑
+        editTablist(id) {
+            this.$store.commit("setType", false);
+            let url = "/base/equipment/" + id, vm = this;
+            this.commonMethods.emitAjax({
+                path: url,
+                type: "GET",
+                data: { org_id: vm.$route.params.org_id ? vm.$route.params.org_id : '' },
+                success: function (response) {
+                    vm.labDetails = response;
+                }
+            })
+        },
+        // 删除
+        deleteTablist(id) {
+            let url = "/base/equipment/" + id, vm = this;
+            this.$Modal.confirm({
+                title: '温馨提示',
+                content: '确认删除该设备？',
+                onOk: () => {
+                    vm.commonMethods.emitAjax({
+                        path: url,
+                        type: "DELETE",
+                        data: { org_id: vm.$route.params.org_id ? vm.$route.params.org_id : '' },
+                        success: function (response) {
+                            vm.$Modal.success({
+                                title: "系统提示",
+                                content: "保存成功！"
+                            });
+                            vm.$store.commit("setType", true);
+                            vm.getEquipmentList();//重新请求列表数据
+                        },
+                        error: function () {
+                            vm.$Modal.error({
+                                title: "系统提示",
+                                content: "保存失败！"
+                            });
+                            vm.$store.commit("setType", true);
+                        }
+                    })
+                },
+                onCancel: () => {
+                    vm.$Message.info('成功取消操作');
+                }
+            });
+        },
+        // 添加
+        addData() {
+            this.$store.commit("setType", false);
+            this.labDetails = {};
+        },
+        // 删除
+        deleteData() {
+            if (this.multipleDeleteId && this.multipleDeleteId != '') {
+                this.multipleDelete()
+            } else {
+                this.$Modal.error({
+                    title: "系统提示",
+                    content: "请选择删除项！"
+                });
+            }
+        },
+        //选中项
+        selectedOption: function (option) {
+            let deleteData = [];
+            option.forEach(element => {
+                deleteData.push(element.equ_id)
+            });
+            this.multipleDeleteId = deleteData.join(',');
+        },
+        multipleDelete() {
+            let vm = this, url = "/base/equipment/deletes";
+            this.$Modal.confirm({
+                title: '温馨提示',
+                content: '确认删除这些设备信息吗？',
+                onOk: () => {
+                    vm.commonMethods.emitAjax({
+                        path: url,
+                        type: "DELETE",
+                        data: {
+                            'equ_ids': vm.multipleDeleteId,
+                            'org_id': this.$route.params.org_id ? this.$route.params.org_id : null
+                        },
+                        success: function (response) {
+                            vm.$Message.info('删除成功');
+                            vm.getEquipmentList();//重新请求列表数据
+                            vm.$store.commit("setType", true);
+                        },
+                        error: function () {
+                            vm.$Modal.error({
+                                title: "系统提示",
+                                content: "保存失败！"
+                            });
+                            vm.$store.commit("setType", true);
+                        }
+                    })
+                },
+                onCancel: () => {
+                    vm.$Message.info('成功取消操作');
+                }
+            });
+        },
+        // 动态加载
+        remoteName(query) {
+            if (query !== '') {
+                this.$store.commit("getEquipmentName", query);
+                this.loading = true;
+                let that = this;
+                setTimeout(() => {
+                    this.loading = false;
+                    this.optionsName = that.getEquipmenData;
+                }, 200);
+            } else {
+                this.optionsName = [];
+            }
+        },
+        // 搜索
+        searchData() {
+            this.getEquipmentList();
+        },
+        getEquipmentList() {
+            var paramsQuery = Object.assign({}, this.searchItem);
+            paramsQuery.page = this.page;
+            paramsQuery.size = this.size;
+            paramsQuery.org_id = this.$route.params.org_id ? this.$route.params.org_id : '';
+            this.$store.commit("getEquipment", paramsQuery);
+        },
+        setPage(page) {
+            this.page=page;
+            this.getEquipmentList();
+        },
+       
+        downloadFile() {
+            var vm = this;
+            const paramsQuery = Object.assign({},vm.searchItem); 
+            paramsQuery.org_id=this.$route.params.org_id ? this.$route.params.org_id : '';
+            vm.$store.commit("setModal", {
+                show: true,
+                content: "是否要导出设备信息？",
+                onOk: () => {
+                this.commonMethods.emitAjax({
+                        path: "/base/equipment/export/",
+                        type: "GET",
+                        data:paramsQuery,
+                        success: function (response) {
+                           /*excel需要的字段*/
+                            var userExcelList = response,userExcelList_=[],data = [{}];
+                            if (userExcelList.length == 0) {
+                                vm.$Message.warning('没有可导出的数据!');
+                                return false;
+                            };
+                            const importData={
+                                equ_name:"设备名称",
+                                equ_type:"设备类型",
+                                org_name:"实验室",
+                                dutyperson:"责任人",
+                                phone:"联系电话",
+                                assetno:"资产编号",
+                                equ_state:"设备状态"
+                            };
+                            for (let i = 0; i < userExcelList.length; i++) {
+                                delete userExcelList[i].org_id;
+                                if(i==0){
+                                    for(let k in userExcelList[i]){
+                                        for(let j in importData){
+                                            if(k==j){
+                                                data[0][k]=importData[j];
+                                            }
+                                        }    
+                                    }
+                                    
+                                }
+                            };
+                            data = data.concat(userExcelList);
+                            excel.downloadExl(data, '设备信息', undefined, vm.outFile);
+                        }
+                    })
+                }
+            });
+        },
+        // 保存和编辑
+        saveEquipment() {
+            let vm = this, path, type, para = JSON.parse(JSON.stringify(this.labDetails));
+            if (this.labDetails.equ_id && this.labDetails.equ_id != '') {
+                path = '/base/equipment/' + this.labDetails.equ_id;
+                type = 'PUT';
+                delete para.equ_id;
+            } else {
+                path = '/base/equipment';
+                type = 'POST';
+            }
+            para.org_id = this.$route.params.org_id ? this.$route.params.org_id : '';
+            this.commonMethods.emitAjax({
+                path,
+                type,
+                data: para,
+                success: function (response) {
+                    vm.$Modal.success({
+                        title: "系统提示",
+                        content: "保存成功！"
+                    });
+                    vm.getEquipmentList();//重新请求列表数据
+                    vm.$store.commit("setType",true);
+                },
+                error: function () {
+                    vm.$Modal.error({
+                        title: "系统提示",
+                        content: "保存失败！"
+                    });
+                    vm.$store.commit("setType", false);
+                }
+            })
+        },
+        // 取消
+        cancelOperate() {
+            this.$store.commit("setType", false);
+            this.initPage();
+        },
+         dateFormat: function (time) {
+            this.labDetails.nextchecktime = time || '';
+        },
+        trim: function (str) { //去空格
+            return str.replace(/(^\s*)|(\s*$)/g, "");
+        },
+        setCurrentPage: function () {
+            global.$on("currentPageInit", (message) => {   //这里最好用箭头函数，不然this指向有问题
+                this.page = message
+            })
+        },
+    }
+};
+</script>
+
+<style>
+.search-equipment .ivu-form-item-content {
+  margin-left: 80px !important;
+}
+.search-equipment button.searchsbt {
+  position: relative;
+  right: 0;
+  bottom: 0;
+}
+</style>
+>>>>>>> parent of a1b68fd... master5
