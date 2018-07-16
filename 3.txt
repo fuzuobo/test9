@@ -1,7 +1,7 @@
-<template>
+﻿<template>
     <div class="main------box">
         <section class="AdditionsAndDeletions">
-        
+        dev-------------
             <Row>
                 <Col span="10">
                 <Form class="search-equipment" :model="searchItem" :label-width="80">
