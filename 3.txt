@@ -6,14 +6,14 @@
                 <Col span="10">
                 <Form class="search-equipment" :model="searchItem" :label-width="80">
                     <Col span="10">
-                    <FormItem label="设备名称">
+                    <FormItem label="名称">
                         <Select v-model="searchItem.equ_name" filterable remote :remote-method="remoteName" :loading="loading" clearable placeholder="请输入设备名称...">
                             <Option v-for="(item,index) in optionsName" :value="item.equ_name" :key="index">{{item.equ_name}}</Option>
                         </Select>
                     </FormItem>
                     </Col>
                     <Col span="10">
-                    <FormItem label="设备状态">
+                    <FormItem label="状态">
                         <Select v-model="searchItem.equ_state" clearable>
                             <Option :value="item.id" :key="item.id" v-for="item in equstate">{{ item.codename }}</Option>
                         </Select>
