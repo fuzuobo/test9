@@ -1,11 +1,10 @@
-<<<<<<< HEAD
-﻿33
-=======
+
+
 ﻿<template>
     <div class="main------box">
         <section class="AdditionsAndDeletions">
 
-        	master----------yyyyyyyyyyyyyyyy88888888888
+        	888888
 
             <Row>
                 <Col span="10">
