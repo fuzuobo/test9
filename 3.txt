@@ -1,11 +1,18 @@
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 ﻿
 
 ﻿<template>
     <div class="main------box">
         <section class="AdditionsAndDeletions">
 
+<<<<<<< Updated upstream
         	11111111111111111111111111
+=======
+        00000
+>>>>>>> Stashed changes
 
             <Row>
 =======
