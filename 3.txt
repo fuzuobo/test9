@@ -1,7 +1,7 @@
 ﻿<template>
     <div class="main------box">
         <section class="AdditionsAndDeletions">
-      fefwefewfewwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+      88888888888888888888888888888999999999999999999999999999999
             <Row>lllllllllllllllll
                 <Col span="10">
                 <Form class="search-equipment" :model="searchItem" :label-width="80">
