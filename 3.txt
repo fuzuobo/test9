@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿
 
 ﻿<template>
@@ -7,6 +8,13 @@
         	11111111111111111111111111
 
             <Row>
+=======
+﻿<template>
+    <div class="main------box">
+        <section class="AdditionsAndDeletions">
+      88888888888888888888888888888999999999999999999999999999999
+            <Row>lllllllllllllllll
+>>>>>>> da56c2072e6565fe480bf71ce3dc70f7dda8c8ec
                 <Col span="10">
                 <Form class="search-equipment" :model="searchItem" :label-width="80">
                     <Col span="10">
