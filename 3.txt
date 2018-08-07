@@ -1,5 +1,8 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 ﻿
@@ -9,7 +12,11 @@
         <section class="AdditionsAndDeletions">
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         	11111111111111111111111111
+=======
+        00000
+>>>>>>> Stashed changes
 =======
         00000
 >>>>>>> Stashed changes
